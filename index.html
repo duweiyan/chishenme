@@ -18,12 +18,15 @@
                         lunch: '#4CAF50',
                         dinner: '#2196F3',
                         snack: '#E91E63',
-                        fruit: '#8BC34A',
-                        other: '#6a11cb'
+                        other: '#6a11cb',
+                        fruit: '#FF4500' // 新增水果分类颜色
                     },
                     fontFamily: {
                         sans: ['Microsoft YaHei', 'sans-serif'],
                     },
+                    scale: { // 新增按钮缩放比例
+                        '85': '.85'
+                    }
                 }
             }
         }
@@ -47,10 +50,6 @@
             .text-shadow {
                 text-shadow: 0 2px 4px rgba(0,0,0,0.1);
             }
-            .category-btn-active {
-                background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-                color: white;
-            }
         }
     </style>
 </head>
@@ -67,33 +66,33 @@
                        value="https://eat.1172118.xyz/shiwu.txt">
             </div>
             
+            <!-- 缩小按钮尺寸：通过scale和padding调整 -->
             <button id="load-btn" 
-                    class="w-full bg-gradient-primary text-white font-medium py-4 px-6 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1 active:translate-y-0 transition-all duration-300 text-lg">
+                    class="w-full bg-gradient-primary text-white font-medium py-3 px-5 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1 active:translate-y-0 transition-all duration-300 text-lg transform scale-85 focus:scale-100">
                 加载食物列表
             </button>
             
-            <!-- 分类选择 - 自适应单行布局 -->
-            <div class="my-6 overflow-x-auto scrollbar-hide">
-                <div class="flex space-x-2 min-w-max pb-2">
-                    <button class="category-btn flex-1 min-w-[60px] bg-gradient-primary text-white py-2 px-3 rounded-full shadow-md transition-all text-xs md:text-sm whitespace-nowrap" data-category="all">
-                        全部
-                    </button>
-                    <button class="category-btn flex-1 min-w-[60px] bg-white text-gray-700 py-2 px-3 rounded-full shadow-md hover:bg-gray-50 transition-all text-xs md:text-sm whitespace-nowrap" data-category="breakfast">
-                        早餐
-                    </button>
-                    <button class="category-btn flex-1 min-w-[60px] bg-white text-gray-700 py-2 px-3 rounded-full shadow-md hover:bg-gray-50 transition-all text-xs md:text-sm whitespace-nowrap" data-category="lunch">
-                        午餐
-                    </button>
-                    <button class="category-btn flex-1 min-w-[60px] bg-white text-gray-700 py-2 px-3 rounded-full shadow-md hover:bg-gray-50 transition-all text-xs md:text-sm whitespace-nowrap" data-category="dinner">
-                        晚餐
-                    </button>
-                    <button class="category-btn flex-1 min-w-[60px] bg-white text-gray-700 py-2 px-3 rounded-full shadow-md hover:bg-gray-50 transition-all text-xs md:text-sm whitespace-nowrap" data-category="snack">
-                        零食
-                    </button>
-                    <button class="category-btn flex-1 min-w-[60px] bg-white text-gray-700 py-2 px-3 rounded-full shadow-md hover:bg-gray-50 transition-all text-xs md:text-sm whitespace-nowrap" data-category="fruit">
-                        水果
-                    </button>
-                </div>
+            <!-- 分类选择（新增水果分类） -->
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-3 my-6"> <!-- 调整为6列适应新分类 -->
+                <button class="category-btn active bg-gradient-primary text-white py-3 rounded-full shadow-md transition-all" data-category="all">
+                    全部
+                </button>
+                <button class="category-btn bg-white text-gray-700 py-3 rounded-full shadow-md hover:bg-gray-50 transition-all" data-category="breakfast">
+                    早餐
+                </button>
+                <button class="category-btn bg-white text-gray-700 py-3 rounded-full shadow-md hover:bg-gray-50 transition-all" data-category="lunch">
+                    午餐
+                </button>
+                <button class="category-btn bg-white text-gray-700 py-3 rounded-full shadow-md hover:bg-gray-50 transition-all" data-category="dinner">
+                    晚餐
+                </button>
+                <button class="category-btn bg-white text-gray-700 py-3 rounded-full shadow-md hover:bg-gray-50 transition-all" data-category="snack">
+                    零食
+                </button>
+                <!-- 新增水果分类按钮 -->
+                <button class="category-btn bg-white text-gray-700 py-3 rounded-full shadow-md hover:bg-gray-50 transition-all" data-category="fruit">
+                    水果
+                </button>
             </div>
             
             <!-- 结果显示 -->
@@ -101,9 +100,9 @@
                 <p class="text-[clamp(1.5rem,5vw,2.5rem)] font-bold text-accent text-center transition-all" id="food-text">准备就绪</p>
             </div>
             
-            <!-- 控制按钮 -->
+            <!-- 缩小开始选择按钮 -->
             <button id="toggle-btn" 
-                    class="w-full bg-gradient-primary text-white font-medium py-4 px-6 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1 active:translate-y-0 transition-all duration-300 text-lg"
+                    class="w-full bg-gradient-primary text-white font-medium py-3 px-5 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1 active:translate-y-0 transition-all duration-300 text-lg transform scale-85 focus:scale-100"
                     disabled>
                 开始选择
             </button>
@@ -129,7 +128,7 @@
     </div>
 
     <script>
-        // 页面元素
+        // 页面元素（无需修改）
         const toggleBtn = document.getElementById('toggle-btn');
         const foodDisplay = document.getElementById('food-display');
         const foodText = document.getElementById('food-text');
@@ -144,7 +143,7 @@
         const categoryButtons = document.querySelectorAll('.category-btn');
         const foodBackground = document.getElementById('food-background');
         
-        // 数据和状态
+        // 数据和状态（无需修改）
         let allFoods = [];
         let filteredFoods = [];
         let isRunning = false;
@@ -154,24 +153,24 @@
         let foodBgInterval = null;
         let foodBgElements = [];
         
-        // 事件监听
+        // 事件监听（无需修改）
         toggleBtn.addEventListener('click', toggleSelection);
         loadBtn.addEventListener('click', loadFoodList);
         foodListHeader.addEventListener('click', toggleFoodList);
         
-        // 分类按钮事件
+        // 分类按钮事件（自动适配新分类）
         categoryButtons.forEach(button => {
             button.addEventListener('click', () => {
                 selectCategory(button.dataset.category);
             });
         });
         
-        // 页面加载完成后自动加载默认食物列表
+        // 页面加载完成后自动加载默认食物列表（无需修改）
         document.addEventListener('DOMContentLoaded', () => {
             loadFoodList(true);
         });
         
-        // 加载食物列表
+        // 加载食物列表（新增水果分类映射）
         async function loadFoodList(isAutoLoad = false) {
             const url = foodUrlInput.value.trim();
             if (!url) {
@@ -222,7 +221,7 @@
             }
         }
         
-        // 解析食物列表
+        // 解析食物列表（新增水果分类解析）
         function parseFoodList(text) {
             const lines = text.split('\n')
                 .map(line => line.trim())
@@ -245,7 +244,7 @@
             return foods;
         }
         
-        // 映射分类名称
+        // 映射分类名称（新增水果分类映射）
         function mapCategory(textCategory) {
             const categoryMap = {
                 '早餐选项': 'breakfast',
@@ -256,14 +255,14 @@
                 '晚餐': 'dinner',
                 '零食选项': 'snack',
                 '零食': 'snack',
-                '水果选项': 'fruit',
-                '水果': 'fruit'
+                '水果选项': 'fruit', // 支持 #水果选项 格式
+                '水果': 'fruit'      // 支持 #水果 格式
             };
             
             return categoryMap[textCategory] || 'other';
         }
         
-        // 开始/停止随机选择
+        // 开始/停止随机选择（无需修改）
         function toggleSelection() {
             if (isRunning) {
                 clearInterval(intervalId);
@@ -288,7 +287,7 @@
             isRunning = !isRunning;
         }
         
-        // 显示错误信息
+        // 显示错误信息（无需修改）
         function showError(message) {
             errorDisplay.textContent = message;
             if (message) {
@@ -298,7 +297,7 @@
             }
         }
         
-        // 更新食物列表显示
+        // 更新食物列表显示（自动适配新分类颜色）
         function updateFoodListDisplay() {
             foodListElement.innerHTML = '';
             
@@ -317,7 +316,7 @@
                 const foodName = document.createElement('span');
                 foodName.className = 'font-medium';
                 
-                // 根据分类设置颜色
+                // 根据分类设置颜色（新增水果分类颜色）
                 switch(food.category) {
                     case 'breakfast':
                         foodName.classList.add('text-breakfast');
@@ -331,7 +330,7 @@
                     case 'snack':
                         foodName.classList.add('text-snack');
                         break;
-                    case 'fruit':
+                    case 'fruit': // 新增水果分类颜色处理
                         foodName.classList.add('text-fruit');
                         break;
                     default:
@@ -344,7 +343,7 @@
             });
         }
         
-        // 展开/折叠食物列表
+        // 展开/折叠食物列表（无需修改）
         function toggleFoodList() {
             isListExpanded = !isListExpanded;
             
@@ -357,7 +356,7 @@
             }
         }
         
-        // 选择分类
+        // 选择分类（自动适配新分类）
         function selectCategory(category) {
             if (allFoods.length === 0) {
                 loadFoodList();
@@ -387,7 +386,7 @@
             }
         }
         
-        // 筛选食物
+        // 筛选食物（无需修改）
         function filterFoods(category) {
             if (category === 'all') {
                 filteredFoods = [...allFoods];
@@ -396,7 +395,7 @@
             }
         }
         
-        // 背景食物动画
+        // 背景食物动画（自动适配新分类颜色）
         function startFoodBackground() {
             if (foodBgInterval) {
                 clearInterval(foodBgInterval);
@@ -418,7 +417,7 @@
                 bgItem.className = 'food-bg-item';
                 bgItem.textContent = randomFood.name;
                 
-                // 根据分类设置颜色
+                // 根据分类设置颜色（新增水果分类颜色）
                 let colorClass = 'text-other';
                 switch(randomFood.category) {
                     case 'breakfast':
@@ -428,63 +427,3 @@
                         colorClass = 'text-lunch';
                         break;
                     case 'dinner':
-                        colorClass = 'text-dinner';
-                        break;
-                    case 'snack':
-                        colorClass = 'text-snack';
-                        break;
-                    case 'fruit':
-                        colorClass = 'text-fruit';
-                        break;
-                }
-                
-                bgItem.classList.add(colorClass);
-                
-                // 随机位置和大小
-                const maxX = window.innerWidth - 150;
-                const maxY = window.innerHeight - 80;
-                const x = Math.floor(Math.random() * maxX);
-                const y = Math.floor(Math.random() * maxY);
-                const size = Math.floor(Math.random() * 40) + 16; // 小屏幕上字体小一些
-                
-                bgItem.style.left = `${x}px`;
-                bgItem.style.top = `${y}px`;
-                bgItem.style.fontSize = `${size}px`;
-                bgItem.style.transform = `rotate(${Math.floor(Math.random() * 360)}deg)`;
-                
-                foodBackground.appendChild(bgItem);
-                foodBgElements.push(bgItem);
-                
-                // 动画效果
-                setTimeout(() => {
-                    bgItem.style.opacity = '0.6';
-                    bgItem.style.transform = `rotate(${parseInt(bgItem.style.transform) + 10}deg) scale(1.1)`;
-                    
-                    setTimeout(() => {
-                        bgItem.style.opacity = '0';
-                        bgItem.style.transform = `rotate(${parseInt(bgItem.style.transform) + 20}deg) scale(0.9)`;
-                        
-                        setTimeout(() => {
-                            if (bgItem.parentNode) {
-                                bgItem.parentNode.removeChild(bgItem);
-                            }
-                            const index = foodBgElements.indexOf(bgItem);
-                            if (index !== -1) {
-                                foodBgElements.splice(index, 1);
-                            }
-                        }, 700);
-                    }, 2100);
-                }, 10);
-                
-            }, 400);
-        }
-        
-        // 窗口大小变化时重置背景效果
-        window.addEventListener('resize', () => {
-            if (allFoods.length > 0) {
-                startFoodBackground();
-            }
-        });
-    </script>
-</body>
-</html>
