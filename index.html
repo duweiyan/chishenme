@@ -18,7 +18,8 @@
                         lunch: '#4CAF50',
                         dinner: '#2196F3',
                         snack: '#E91E63',
-                        other: '#6a11cb'
+                        other: '#6a11cb',
+                        fruit: '#FF5722' // 新增水果分类颜色
                     },
                     fontFamily: {
                         sans: ['Microsoft YaHei', 'sans-serif'],
@@ -68,7 +69,7 @@
             </button>
             
             <!-- 分类选择 -->
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-3 my-6">
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-3 my-6"> <!-- 修改列数为6 -->
                 <button class="category-btn active bg-gradient-primary text-white py-3 rounded-full shadow-md transition-all" data-category="all">
                     全部
                 </button>
@@ -83,6 +84,10 @@
                 </button>
                 <button class="category-btn bg-white text-gray-700 py-3 rounded-full shadow-md hover:bg-gray-50 transition-all" data-category="snack">
                     零食
+                </button>
+                <!-- 新增水果分类按钮 -->
+                <button class="category-btn bg-white text-gray-700 py-3 rounded-full shadow-md hover:bg-gray-50 transition-all" data-category="fruit">
+                    水果
                 </button>
             </div>
             
@@ -245,7 +250,10 @@
                 '晚餐选项': 'dinner',
                 '晚餐': 'dinner',
                 '零食选项': 'snack',
-                '零食': 'snack'
+                '零食': 'snack',
+                // 新增水果分类映射
+                '水果选项': 'fruit',
+                '水果': 'fruit'
             };
             
             return categoryMap[textCategory] || 'other';
@@ -318,6 +326,9 @@
                         break;
                     case 'snack':
                         foodName.classList.add('text-snack');
+                        break;
+                    case 'fruit': // 新增水果分类样式
+                        foodName.classList.add('text-fruit');
                         break;
                     default:
                         foodName.classList.add('text-other');
@@ -417,6 +428,9 @@
                         break;
                     case 'snack':
                         colorClass = 'text-snack';
+                        break;
+                    case 'fruit': // 新增水果分类颜色
+                        colorClass = 'text-fruit';
                         break;
                 }
                 
