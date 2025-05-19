@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>餐点随机选择器</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            transition: all 0.3s ease;
+        }
+        
+        .container:hover {
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 500;
+        }
+        
+        .food-display {
+            font-size: 36px;
+            font-weight: bold;
+            color: #ff6b6b;
+            min-height: 60px;
+            margin: 30px 0;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+        
+        .food-display.rolling {
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .control-btn {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            margin: 20px 0;
+        }
+        
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .control-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .url-input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        .status {
+            color: #666;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+        
+        .error {
+            color: #ff4d4f;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        .category-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .category-btn {
+            background-color: #f0f0f0;
+            color: #555;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .category-btn.active {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+        }
+        
+        .category-btn:hover:not(.active) {
+            background-color: #e0e0e0;
+        }
+        
+        .food-list-container {
+            margin-top: 30px;
+            text-align: left;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+        
+        .food-list-container.expanded {
+            max-height: 500px;
+        }
+        
+        .food-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .food-list-header h3 {
+            margin: 0;
+            color: #555;
+        }
+        
+        .food-list-header i {
+            transition: transform 0.3s ease;
+        }
+        
+        .food-list-header.expanded i {
+            transform: rotate(180deg);
+        }
+        
+        .food-list {
+            padding: 15px 0;
+            columns: 2;
+            column-gap: 20px;
+        }
+        
+        .food-item {
+            padding: 8px 0;
+            break-inside: avoid;
+            color: #333;
+            transition: all 0.2s ease;
+        }
+        
+        .food-item:hover {
+            color: #2575fc;
+            transform: translateX(5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>餐点随机选择器</h1>
+        <input type="text" id="food-url" class="url-input" 
+               placeholder="输入食物列表URL (例如: https://123.1172118.xyz/shiwu.txt)"
+               value="https://123.1172118.xyz/shiwu.txt">
+        <button id="load-btn" class="control-btn">加载食物列表</button>
+        
+        <!-- 新增的分类按钮 -->
+        <div class="category-buttons">
+            <button class="category-btn active" data-category="all">全部</button>
+            <button class="category-btn" data-category="breakfast">早餐</button>
+            <button class="category-btn" data-category="lunch">午餐</button>
+            <button class="category-btn" data-category="dinner">晚餐</button>
+            <button class="category-btn" data-category="snack">零食</button>
+        </div>
+        
+        <div class="food-display" id="food-display">准备就绪</div>
+        
+        <button id="toggle-btn" class="control-btn" disabled>开始选择</button>
+        
+        <div class="status" id="status">请先加载食物列表</div>
+        <div class="error" id="error"></div>
+        
+        <!-- 食物列表显示区域 -->
+        <div class="food-list-container" id="food-list-container">
+            <div class="food-list-header" id="food-list-header">
+                <h3>已加载的食物列表</h3>
+                <i class="fa fa-chevron-down"></i>
+            </div>
+            <div class="food-list" id="food-list"></div>
+        </div>
+    </div>
+
+    <script>
+        const toggleBtn = document.getElementById('toggle-btn');
+        const foodDisplay = document.getElementById('food-display');
+        const foodUrlInput = document.getElementById('food-url');
+        const loadBtn = document.getElementById('load-btn');
+        const statusDisplay = document.getElementById('status');
+        const errorDisplay = document.getElementById('error');
+        const foodListContainer = document.getElementById('food-list-container');
+        const foodListHeader = document.getElementById('food-list-header');
+        const foodListElement = document.getElementById('food-list');
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        
+        let allFoods = []; // 存储所有食物
+        let filteredFoods = []; // 存储筛选后的食物
+        let isRunning = false;
+        let intervalId = null;
+        let isListExpanded = false;
+        let currentCategory = 'all';
+        
+        toggleBtn.addEventListener('click', toggleSelection);
+        loadBtn.addEventListener('click', loadFoodList);
+        foodListHeader.addEventListener('click', toggleFoodList);
+        
+        // 为分类按钮添加事件监听
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                selectCategory(button.dataset.category);
+            });
+        });
+        
+        async function loadFoodList() {
+            const url = foodUrlInput.value.trim();
+            if (!url) {
+                showError('请输入有效的URL');
+                return;
+            }
+            
+            statusDisplay.textContent = '正在加载食物列表...';
+            toggleBtn.disabled = true;
+            toggleBtn.textContent = '开始选择';
+            
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP错误，状态码: ${response.status}`);
+                }
+                
+                const text = await response.text();
+                // 解析新格式的食物列表
+                allFoods = parseFoodList(text);
+                
+                if (allFoods.length === 0) {
+                    throw new Error('食物列表为空');
+                }
+                
+                // 按当前分类筛选食物
+                filterFoods(currentCategory);
+                
+                statusDisplay.textContent = `已加载 ${allFoods.length} 种食物`;
+                toggleBtn.disabled = false;
+                foodDisplay.textContent = filteredFoods.length > 0 ? filteredFoods[0].name : '无匹配食物';
+                showError('');
+                
+                // 更新食物列表显示
+                updateFoodListDisplay();
+                
+                // 自动展开食物列表
+                toggleFoodList();
+            } catch (error) {
+                showError(`加载失败: ${error.message}`);
+                statusDisplay.textContent = '加载失败，请检查URL';
+            }
+        }
+        
+        // 解析新格式的食物列表
+        function parseFoodList(text) {
+            const lines = text.split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 0);
+            
+            const foods = [];
+            let currentCategory = 'other';
+            
+            lines.forEach(line => {
+                if (line.startsWith('#')) {
+                    // 这是一个分类标题行
+                    currentCategory = mapCategory(line.substring(1).trim().toLowerCase());
+                } else {
+                    // 这是一个食物项
+                    foods.push({
+                        name: line,
+                        category: currentCategory
+                    });
+                }
+            });
+            
+            return foods;
+        }
+        
+        // 将txt中的分类映射到系统支持的分类
+        function mapCategory(textCategory) {
+            const categoryMap = {
+                '早餐选项': 'breakfast',
+                '早餐': 'breakfast',
+                '午餐选项': 'lunch',
+                '午餐': 'lunch',
+                '晚餐选项': 'dinner',
+                '晚餐': 'dinner',
+                '零食选项': 'snack',
+                '零食': 'snack'
+            };
+            
+            return categoryMap[textCategory] || 'other';
+        }
+        
+        function toggleSelection() {
+            if (isRunning) {
+                // 停止选择
+                clearInterval(intervalId);
+                toggleBtn.textContent = '开始选择';
+                foodDisplay.classList.remove('rolling');
+                statusDisplay.textContent = '已停止';
+            } else {
+                // 开始选择
+                if (filteredFoods.length === 0) {
+                    showError('当前分类下没有食物，请选择其他分类');
+                    return;
+                }
+                
+                intervalId = setInterval(() => {
+                    const randomIndex = Math.floor(Math.random() * filteredFoods.length);
+                    foodDisplay.textContent = filteredFoods[randomIndex].name;
+                }, 100);
+                
+                toggleBtn.textContent = '停止选择';
+                foodDisplay.classList.add('rolling');
+                statusDisplay.textContent = '正在随机选择...';
+            }
+            isRunning = !isRunning;
+        }
+        
+        function showError(message) {
+            errorDisplay.textContent = message;
+            errorDisplay.style.display = message ? 'block' : 'none';
+        }
+        
+        function updateFoodListDisplay() {
+            foodListElement.innerHTML = '';
+            
+            if (filteredFoods.length === 0) {
+                const emptyItem = document.createElement('div');
+                emptyItem.className = 'food-item';
+                emptyItem.textContent = '当前分类下没有食物';
+                emptyItem.style.color = '#999';
+                foodListElement.appendChild(emptyItem);
+                return;
+            }
+            
+            filteredFoods.forEach(food => {
+                const foodItem = document.createElement('div');
+                foodItem.className = 'food-item';
+                foodItem.textContent = food.name;
+                
+                // 根据分类添加不同的颜色
+                switch(food.category) {
+                    case 'breakfast':
+                        foodItem.style.color = '#FF9800'; // 橙色
+                        break;
+                    case 'lunch':
+                        foodItem.style.color = '#4CAF50'; // 绿色
+                        break;
+                    case 'dinner':
+                        foodItem.style.color = '#2196F3'; // 蓝色
+                        break;
+                    case 'snack':
+                        foodItem.style.color = '#E91E63'; // 粉色
+                        break;
+                    default:
+                        foodItem.style.color = '#333';
+                }
+                
+                foodListElement.appendChild(foodItem);
+            });
+        }
+        
+        function toggleFoodList() {
+            isListExpanded = !isListExpanded;
+            
+            if (isListExpanded) {
+                foodListContainer.classList.add('expanded');
+                foodListHeader.classList.add('expanded');
+            } else {
+                foodListContainer.classList.remove('expanded');
+                foodListHeader.classList.remove('expanded');
+            }
+        }
+        
+        function selectCategory(category) {
+            // 如果还没有加载食物，先加载
+            if (allFoods.length === 0) {
+                loadFoodList();
+                return;
+            }
+            
+            // 更新当前分类
+            currentCategory = category;
+            
+            // 筛选食物
+            filterFoods(category);
+            
+            // 更新按钮状态
+            categoryButtons.forEach(button => {
+                if (button.dataset.category === category) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+            
+            // 更新显示
+            if (filteredFoods.length > 0) {
+                foodDisplay.textContent = filteredFoods[0].name;
+            } else {
+                foodDisplay.textContent = '当前分类下没有食物';
+            }
+            
+            updateFoodListDisplay();
+            
+            // 如果列表是展开的，滚动到列表顶部
+            if (isListExpanded) {
+                foodListContainer.scrollTop = 0;
+            }
+        }
+        
+        function filterFoods(category) {
+            if (category === 'all') {
+                filteredFoods = [...allFoods];
+            } else {
+                filteredFoods = allFoods.filter(food => food.category === category);
+            }
+        }
+    </script>
+</body>
+</html>
