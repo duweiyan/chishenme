@@ -46,13 +46,6 @@
             .text-shadow {
                 text-shadow: 0 2px 4px rgba(0,0,0,0.1);
             }
-            .scrollbar-hide::-webkit-scrollbar {
-                display: none;
-            }
-            .scrollbar-hide {
-                -ms-overflow-style: none;
-                scrollbar-width: none;
-            }
         }
     </style>
 </head>
@@ -74,22 +67,22 @@
                 加载食物列表
             </button>
             
-            <!-- 分类选择 - 改为水平滚动 -->
-            <div class="my-6 overflow-x-auto scrollbar-hide">
-                <div class="flex space-x-3 min-w-max pb-2">
-                    <button class="category-btn active bg-gradient-primary text-white py-3 px-5 rounded-full shadow-md transition-all whitespace-nowrap" data-category="all">
+            <!-- 分类选择 - 自适应布局 -->
+            <div class="my-6">
+                <div class="flex flex-wrap gap-2">
+                    <button class="category-btn active flex-1 min-w-[80px] bg-gradient-primary text-white py-2 px-3 rounded-full shadow-md transition-all text-sm md:text-base" data-category="all">
                         全部
                     </button>
-                    <button class="category-btn bg-white text-gray-700 py-3 px-5 rounded-full shadow-md hover:bg-gray-50 transition-all whitespace-nowrap" data-category="breakfast">
+                    <button class="category-btn flex-1 min-w-[80px] bg-white text-gray-700 py-2 px-3 rounded-full shadow-md hover:bg-gray-50 transition-all text-sm md:text-base" data-category="breakfast">
                         早餐
                     </button>
-                    <button class="category-btn bg-white text-gray-700 py-3 px-5 rounded-full shadow-md hover:bg-gray-50 transition-all whitespace-nowrap" data-category="lunch">
+                    <button class="category-btn flex-1 min-w-[80px] bg-white text-gray-700 py-2 px-3 rounded-full shadow-md hover:bg-gray-50 transition-all text-sm md:text-base" data-category="lunch">
                         午餐
                     </button>
-                    <button class="category-btn bg-white text-gray-700 py-3 px-5 rounded-full shadow-md hover:bg-gray-50 transition-all whitespace-nowrap" data-category="dinner">
+                    <button class="category-btn flex-1 min-w-[80px] bg-white text-gray-700 py-2 px-3 rounded-full shadow-md hover:bg-gray-50 transition-all text-sm md:text-base" data-category="dinner">
                         晚餐
                     </button>
-                    <button class="category-btn bg-white text-gray-700 py-3 px-5 rounded-full shadow-md hover:bg-gray-50 transition-all whitespace-nowrap" data-category="snack">
+                    <button class="category-btn flex-1 min-w-[80px] bg-white text-gray-700 py-2 px-3 rounded-full shadow-md hover:bg-gray-50 transition-all text-sm md:text-base" data-category="snack">
                         零食
                     </button>
                 </div>
