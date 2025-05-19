@@ -18,6 +18,7 @@
                         lunch: '#4CAF50',
                         dinner: '#2196F3',
                         snack: '#E91E63',
+                        fruit: '#8BC34A',
                         other: '#6a11cb'
                     },
                     fontFamily: {
@@ -46,6 +47,10 @@
             .text-shadow {
                 text-shadow: 0 2px 4px rgba(0,0,0,0.1);
             }
+            .category-btn-active {
+                background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+                color: white;
+            }
         }
     </style>
 </head>
@@ -67,23 +72,26 @@
                 加载食物列表
             </button>
             
-            <!-- 分类选择 - 自适应布局 -->
-            <div class="my-6">
-                <div class="flex flex-wrap gap-2">
-                    <button class="category-btn active flex-1 min-w-[80px] bg-gradient-primary text-white py-2 px-3 rounded-full shadow-md transition-all text-sm md:text-base" data-category="all">
+            <!-- 分类选择 - 自适应单行布局 -->
+            <div class="my-6 overflow-x-auto scrollbar-hide">
+                <div class="flex space-x-2 min-w-max pb-2">
+                    <button class="category-btn flex-1 min-w-[60px] bg-gradient-primary text-white py-2 px-3 rounded-full shadow-md transition-all text-xs md:text-sm whitespace-nowrap" data-category="all">
                         全部
                     </button>
-                    <button class="category-btn flex-1 min-w-[80px] bg-white text-gray-700 py-2 px-3 rounded-full shadow-md hover:bg-gray-50 transition-all text-sm md:text-base" data-category="breakfast">
+                    <button class="category-btn flex-1 min-w-[60px] bg-white text-gray-700 py-2 px-3 rounded-full shadow-md hover:bg-gray-50 transition-all text-xs md:text-sm whitespace-nowrap" data-category="breakfast">
                         早餐
                     </button>
-                    <button class="category-btn flex-1 min-w-[80px] bg-white text-gray-700 py-2 px-3 rounded-full shadow-md hover:bg-gray-50 transition-all text-sm md:text-base" data-category="lunch">
+                    <button class="category-btn flex-1 min-w-[60px] bg-white text-gray-700 py-2 px-3 rounded-full shadow-md hover:bg-gray-50 transition-all text-xs md:text-sm whitespace-nowrap" data-category="lunch">
                         午餐
                     </button>
-                    <button class="category-btn flex-1 min-w-[80px] bg-white text-gray-700 py-2 px-3 rounded-full shadow-md hover:bg-gray-50 transition-all text-sm md:text-base" data-category="dinner">
+                    <button class="category-btn flex-1 min-w-[60px] bg-white text-gray-700 py-2 px-3 rounded-full shadow-md hover:bg-gray-50 transition-all text-xs md:text-sm whitespace-nowrap" data-category="dinner">
                         晚餐
                     </button>
-                    <button class="category-btn flex-1 min-w-[80px] bg-white text-gray-700 py-2 px-3 rounded-full shadow-md hover:bg-gray-50 transition-all text-sm md:text-base" data-category="snack">
+                    <button class="category-btn flex-1 min-w-[60px] bg-white text-gray-700 py-2 px-3 rounded-full shadow-md hover:bg-gray-50 transition-all text-xs md:text-sm whitespace-nowrap" data-category="snack">
                         零食
+                    </button>
+                    <button class="category-btn flex-1 min-w-[60px] bg-white text-gray-700 py-2 px-3 rounded-full shadow-md hover:bg-gray-50 transition-all text-xs md:text-sm whitespace-nowrap" data-category="fruit">
+                        水果
                     </button>
                 </div>
             </div>
@@ -247,7 +255,9 @@
                 '晚餐选项': 'dinner',
                 '晚餐': 'dinner',
                 '零食选项': 'snack',
-                '零食': 'snack'
+                '零食': 'snack',
+                '水果选项': 'fruit',
+                '水果': 'fruit'
             };
             
             return categoryMap[textCategory] || 'other';
@@ -320,6 +330,9 @@
                         break;
                     case 'snack':
                         foodName.classList.add('text-snack');
+                        break;
+                    case 'fruit':
+                        foodName.classList.add('text-fruit');
                         break;
                     default:
                         foodName.classList.add('text-other');
@@ -419,6 +432,9 @@
                         break;
                     case 'snack':
                         colorClass = 'text-snack';
+                        break;
+                    case 'fruit':
+                        colorClass = 'text-fruit';
                         break;
                 }
                 
